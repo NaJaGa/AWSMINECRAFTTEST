@@ -61,10 +61,11 @@ jobs:
           sudo apt update
 
           rm -rf /minecraft/mods
-          aws s3 cp s3://minecraft-server-devops-pro-fin/setup/mods /minecraft/mods --recursive
+          aws s3 cp s3://minecraft-server-devops-pro-fin/mods /minecraft/mods
+          aws s3 cp s3://minecraft-server-devops-pro-fin/mods/delacallealcraft-1.0.0.jar /minecraft/mods/delacallealcraft-1.0.0.jar
 
           cd /minecraft
-          sudo ./run.sh
+          sudo nohup ./run.sh > minecraft.log 2>&1 &
 
 
           EOF
