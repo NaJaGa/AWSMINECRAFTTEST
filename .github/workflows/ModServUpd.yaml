@@ -45,11 +45,18 @@ jobs:
     - name: Configuracion EC2 Actualizacion de mods
       env:
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          IP_ADDRESS: ${{ secrets.IP_ADDRESS }}
           USER_NAME: ${{ secrets.EC2_USER_NAME }}
       run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+
+          IP_ADDRESS=$(aws ec2 describe-instances \
+            --query 'Reservations[0].Instances[0].PublicIpAddress' \
+            --output text)
+    
+          echo "La IP pública de la instancia EC2 es: $IP_ADDRESS"
+
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${IP_ADDRESS} << 'EOF'
+
 
           sudo apt update
 
