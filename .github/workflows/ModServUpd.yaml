@@ -21,3 +21,18 @@ jobs:
 
     - name: Deploy static site to S3 bucket
       run: aws s3 sync ./ s3://minecraft-server-devops-pro-fin --delete
+    
+    - name: Apagar EC2
+      run: |
+          aws ec2 stop-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+          echo "Instancia EC2 apagada."
+
+    - name: Prender EC2
+      run: |
+          aws ec2 start-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+          echo "Instancia EC2 prendida."
+          
+    - name: Esperar a que la instancia esté en 'running'
+      run: |
+          aws ec2 wait instance-running --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+          echo "La instancia EC2 está corriendo."
