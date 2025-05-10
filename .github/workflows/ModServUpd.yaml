@@ -60,10 +60,10 @@ jobs:
 
           sudo apt update
 
-          rm -rf ~/minecraft/mods/
+          rm -rf /minecraft/mods
           aws s3 cp s3://minecraft-server-devops-pro-fin/setup/mods /minecraft/mods --recursive
 
-          cd ~/minecraft
+          cd /minecraft
           sudo ./run.sh
 
 
