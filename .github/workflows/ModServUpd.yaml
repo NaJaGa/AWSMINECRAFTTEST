@@ -41,3 +41,25 @@ jobs:
       run: |
           aws ec2 wait instance-running --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
           echo "La instancia EC2 está corriendo."
+
+    - name: Configuracion EC2 Actualizacion de mods
+      env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          IP_ADDRESS: ${{ secrets.IP_ADDRESS }}
+          USER_NAME: ${{ secrets.EC2_USER_NAME }}
+      run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${IP_ADDRESS} << 'EOF'
+
+          sudo apt update
+
+          rm -rf ~/minecraft/mods/
+          aws s3 cp s3://minecraft-server-devops-pro-fin/setup/mods /minecraft/mods --recursive
+
+          cd ~/minecraft
+          sudo ./run.sh
+
+
+          EOF
+          rm private_key
+          
