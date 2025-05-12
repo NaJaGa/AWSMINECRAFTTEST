@@ -19,7 +19,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
 
-    - name: Deploy static site to S3 bucket
+    - name: Subimos los archivos a la bucket
       run: aws s3 sync ./ s3://minecraft-server-devops-pro-fin --delete
     
     - name: Apagar EC2
@@ -57,13 +57,28 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${IP_ADDRESS} << 'EOF'
 
+          
+
 
           sudo apt update
 
+          rm -rf /modSetup/'DeLaCalleAlCraft - Mod'
           rm -rf /minecraft/mods
-          aws s3 cp --recursive s3://minecraft-server-devops-pro-fin/mods /minecraft/mods
 
-          cd /minecraft
+          aws s3 cp --recursive s3://minecraft-server-devops-pro-fin/'DeLaCalleAlCraft - Mod' /modSetup/'DeLaCalleAlCraft - Mod'
+          cd /modSetup/
+          cd 'DeLaCalleAlCraft - Mod'/
+
+          chmod 777 gradlew
+          ./gradlew build
+
+          cd build/
+          cd libs/
+          
+          mkdir /minecraft/mods
+          mv delacallealcraft-1.0.0.jar /minecraft/mods
+
+          cd /minecraft/
           sudo nohup ./run.sh > minecraft.log 2>&1 &
 
 
